@@ -145,7 +145,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
 
             JSONObject body = new JSONObject();
             JSONObject data = new JSONObject();
-
+                                                  
             data.put(Constants.REMOTE_MSG_TYPE, Constants.REMOTE_MSG_INVITATION);
             data.put(Constants.REMOTE_MSG_MEETING_TYPE, meetingType);
             data.put(Constants.KEY_FIRST_NAME, preferenceManager.getString(Constants.KEY_FIRST_NAME));
