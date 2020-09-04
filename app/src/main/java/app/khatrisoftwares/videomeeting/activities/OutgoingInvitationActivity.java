@@ -244,7 +244,7 @@ public class OutgoingInvitationActivity extends AppCompatActivity {
                         builder.setWelcomePageEnabled(false);
                         builder.setRoom(meetingRoom);
                         if (meetingType.equals("audio")) {
-                            builder.setVideoMuted(true);
+                            builder.setAudioOnly(true);
                         }
 
                         JitsiMeetActivity.launch(OutgoingInvitationActivity.this, builder.build());

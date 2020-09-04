@@ -8,6 +8,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +34,7 @@ import retrofit2.Response;
 public class IncomingInvitationActivity extends AppCompatActivity {
 
     private String meetingType = null;
-
+    private Ringtone ringtone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,12 @@ public class IncomingInvitationActivity extends AppCompatActivity {
         TextView textUsername = findViewById(R.id.textUsername);
         TextView textEmail = findViewById(R.id.textEmail);
 
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+         ringtone = RingtoneManager.getRingtone(getApplicationContext(),uri);
+        if(!ringtone.isPlaying()){
+            ringtone.play();
+        }
+
 
         String firstName = getIntent().getStringExtra(Constants.KEY_FIRST_NAME);
         if (firstName != null){
@@ -67,16 +76,24 @@ public class IncomingInvitationActivity extends AppCompatActivity {
         textEmail.setText(getIntent().getStringExtra(Constants.KEY_EMAIL));
 
         ImageView imageAcceptInvitation = findViewById(R.id.imageAcceptInvitation);
-        imageAcceptInvitation.setOnClickListener(v -> sendInvitationResponse(
-                Constants.REMOTE_MSG_INVITATION_ACCEPTED,
-                getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)
-        ));
+        imageAcceptInvitation.setOnClickListener(v -> {
+            sendInvitationResponse(
+                    Constants.REMOTE_MSG_INVITATION_ACCEPTED,
+                    getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)
+            );
+            if(ringtone.isPlaying())
+                ringtone.stop();
+        });
 
         ImageView imageRejectInvitation = findViewById(R.id.imageRejectInvitation);
-        imageRejectInvitation.setOnClickListener(v -> sendInvitationResponse(
-                Constants.REMOTE_MSG_INVITATION_REJECTED,
-                getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)
-        ));
+        imageRejectInvitation.setOnClickListener(v -> {
+            sendInvitationResponse(
+                    Constants.REMOTE_MSG_INVITATION_REJECTED,
+                    getIntent().getStringExtra(Constants.REMOTE_MSG_INVITER_TOKEN)
+            );
+            if(ringtone.isPlaying())
+                ringtone.stop();
+        });
     }
 
     private void sendInvitationResponse(String type,String receiverToken){
@@ -156,6 +173,8 @@ public class IncomingInvitationActivity extends AppCompatActivity {
             String type = intent.getStringExtra(Constants.REMOTE_MSG_INVITATION_RESPONSE);
             if (type!=null){
                 if (type.equals(Constants.REMOTE_MSG_INVITATION_CANCELLED)){
+                    if(ringtone.isPlaying())
+                        ringtone.stop();
                     Toast.makeText(context, "Invitation Cancelled", Toast.LENGTH_SHORT).show();
                     finish();
                 }

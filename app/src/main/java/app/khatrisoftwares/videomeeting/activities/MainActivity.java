@@ -1,6 +1,7 @@
 package app.khatrisoftwares.videomeeting.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -82,6 +84,10 @@ public class MainActivity extends AppCompatActivity implements UsersListener {
 
         getUsers();
         checkForBatteryOptimizations();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkForDrawOverOtherApps();
+        }
     }
 
     private void getUsers(){
@@ -197,6 +203,14 @@ public class MainActivity extends AppCompatActivity implements UsersListener {
                 builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
                 builder.create().show();
             }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkForDrawOverOtherApps(){
+        if (!Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 0);
         }
     }
 
